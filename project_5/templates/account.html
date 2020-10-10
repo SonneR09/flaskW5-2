@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+  {% block title %} <title>Profile | Stepik Delivery</title> {% endblock %}
+  {% block wrapper %}
+  <main class="container">
+    <section class="row">
+      <div class="col-8 col-lg-8">
+        <h1 class="h3 my-5">Личный кабинет. Заказы</h1>
+        {% for order in orders %}
+        <div class="card mb-3">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-10 col-lg-12">
+                  <span class="h5"><small>Заказ от {{ order.data }} на сумму: {{ order.price }} P</small></span>
+                  {% if order.status == 'Выполняется' %}
+                  <span class="badge badge-primary float-right">{{order.status}}</span>
+                  {% else %}}
+                  <span class="badge badge-success float-right">{{order.status}}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </li>
+            <div class="card-body">
+              <div class="row">
+                {% for meal in order.ord_meals.split(',')|unique() %}
+                <p class="col-4 text-muted">{{ meal }} </p>
+                <p class="col-2 text-muted">{{ order.ord_meals.split(',').count(meal) }} шт.</p>
+                <p class="col-6 text-muted">{{ meals.filter(Meal.title == meal).first().price * order.ord_meals.split(',').count(meal)}} руб.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %} <title>Stepik Delivery</title> {% endblock %}
+{% block wrapper %}
+  <main class="container">
+    <h1 class="h3 my-4">Корзина</h1>
+      {% if deleted == 't' %}
+      <div class="alert alert-warning" role="alert">Блюдо удалено</div>
+      {% endif %}
+      {% if not session.get('user', {}).get('is_auth', False) %}
+    <div class="alert alert-warning" role="alert">Чтобы сделать заказ – <a href="/login/">войдите</a> или <a href="/register/">зарегистрируйтесь</a></div>
+        {% endif %}
+    <div class="row mt-5">
+        <div class="col-4">
+          <form action="/cart/f/" method="POST">
+          <h4 class="">Ваши данные</h4>
+          <div class=" md-4 order-md-1">
+            <div class="mt-3 mb-3">
+                {{ form.hidden_tag() }}
+              {{ form.name.label }}
+             {% if form.name.errors %}
+                  <div class="alert alert-secondary" role="alert">
+                        {{ form.name(class="form-control alert alert-danger", placeholder='Введите имя...') }}
+                        {% for e in form.name.errors %}
+                            {{e}}
+                        {% endfor %}
+                  </div>
+              {% else %}
+                {{ form.name(class="form-control", placeholder='Введите имя...') }}
+              {% endif %}
+            </div>
+          </div>
+          <div class=" md-4 order-md-1">
+            <div class="mt-3 mb-3">
+              {{ form.address.label }}
+              {% if form.address.errors %}
+                  {{ form.address(class="form-control alert alert-danger", placeholder='Введите адрес') }}
+                  <div class="alert alert-secondary" role="alert">
+                        {% for e in form.address.errors %}
+                            {{e}}
+                        {% endfor %}
+                  </div>
+              {% else %}
+                {{ form.address(class="form-control", placeholder='Введите адрес') }}
+              {% endif %}
+            </div>
+          </div>
+            <div class=" md-4 order-md-1">
+            <div class="mt-3 mb-3">
+              {{ form.phone.label }}
+              {% if form.phone.errors %}
+                  {{ form.phone(class="form-control alert alert-danger", placeholder='Введите телефон +7XXX...') }}
+                  <div class="alert alert-secondary" role="alert">
+                        {% for e in form.phone.errors %}
+                            {{e}}
+                        {% endfor %}
+                  </div>
+              {% else %}
+                {{ form.phone(class="form-control", placeholder='Введите телефон +7XXX...') }}
+              {% endif %}
+            </div>
+          </div>
+          <div class="md-4 form-label-group">
+             {{ form.mail.label }}
+              {% if form.mail.errors %}
+                  {{ form.mail(class="form-control alert alert-danger", placeholder='Введите почту') }}
+                  <div class="alert alert-secondary" role="alert">
+                        {% for e in form.mail.errors %}
+                            {{e}}
+                        {% endfor %}
+                  </div>
+              {% else %}
+                {{ form.mail(class="form-control", placeholder='Введите почту') }}
+              {% endif %}
+          </div>
+          <div class=" md-4 order-md-1">
+              {% if session.get('user', {}).get('is_auth', False) %}
+              <span>
+                <button type="submit" class="mt-3 mb-5 btn btn-danger">Оформить заказ</button>
+                  <a class="mt-3 mb-5 ml-2 btn btn-danger" href="/account/" role="button">Личный кабинет</a>
+              </span>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+
+
+
+      <div class="col-1"></div>
+      <div class="col-7">
+        <h4 class="mb-3 col-7 mb-5">{{session.get('cart', '')|length }} блюда в корзине</h4>
+        <table class="table">
+          <tbody>
+          {% if session.get('cart', '') != '' %}
+            {% for id in session['cart']|unique() %}
+            <tr>
+              <th scope="row">{{ meals.get(id).title }}</th>
+              <td></td>
+              <td>{{session['cart'].count(id)}} шт.</td>
+              <td>{{ meals.get(id).price }} руб.</td>
+              <td><a class="text-danger" href="/delete/{{ id }}">Удалить</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+          </tbody>
+        </table>
+        <hr>
+        <p class="display-4 my-2 mx-5 text-right">{{session.get('total_price', 0)}} руб.</p>
+      </div>
+    </div>
+    {% endblock %}
